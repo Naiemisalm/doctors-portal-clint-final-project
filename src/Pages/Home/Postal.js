@@ -5,7 +5,7 @@ import Button from '../Shared/Button';
 const Postal = () => {
     return (
         <div>
-            <div class="hero min-h-screen mb-12">
+            <div class="hero min-h-screen my-28">
                 <div class="hero-content flex-col lg:flex-row">
                     <img src={treatment} class="max-w-sm rounded-lg shadow-2xl" />
                     <div className='px-8'>
