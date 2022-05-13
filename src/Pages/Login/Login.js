@@ -1,36 +1,120 @@
 import React from 'react';
-import Button from '../Shared/Button';
-import appointment from '../../assets/images/appointment.png'
+import { useForm } from "react-hook-form";
+import auth from '../../firebase.init';
+import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import Loading from '../Shared/Loading';
+import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+
+
+
+
 
 const Login = () => {
-    return (
-        <div style={{
-            background: `url(${appointment})`
-        }}>
+    const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+    const { register, formState: { errors }, handleSubmit } = useForm();
 
+    const [
+        signInWithEmailAndPassword,
+        user1,
+        loading1,
+        error1,
+      ] = useSignInWithEmailAndPassword(auth);
+
+
+      let signInError;
+
+      if(loading ||loading1){
+        return <Loading></Loading>
+      }
+      if(error|| error1){
+          signInError = <p className='text-red-500'>{error?.message || error1?.message}</p>
+      }
+
+     if(user){
+         console.log(user || user1)
+     }
+
+    const onSubmit = data =>{
+        console.log(data);
+        signInWithEmailAndPassword(data.email,data.password)
+    }
+        
+    return (
+        <div>
             <div class="hero min-h-screen">
 
-                <div class="hero-content ">
+                <div class="card w-96 bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="text-center text-2xl font-bold">Login</h2>
 
-                    <div class="card  w-full max-w-sm shadow-2xl bg-base-100">
+                        <form onSubmit={handleSubmit(onSubmit)}>
 
-                        <div class="card-body">
-                            <div class="form-control">
+                            <div class="form-control w-full max-w-xs">
+                                <label class="label">
+                                    <span class="label-text">Email</span>
 
-                                <input type="text" placeholder="Email Address" class="input input-bordered" />
+                                </label>
+                                <input
+                                    type="email"
+                                    placeholder="Your Email"
+                                    className="input input-bordered w-full max-w-xs"
+                                    {...register("email", {
+                                        required: {
+                                            value: true,
+                                            message: 'Email is Required'
+                                        },
+                                        pattern: {
+                                            value: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+                                            message: 'Provide a valid Email'
+                                        }
+                                    })}
+                                />
+                                <label class="label">
+                                    {errors.email?.type === 'required' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
+                                    {errors.email?.type === 'pattern' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
+
+                                </label>
+
                             </div>
+                            <div class="form-control w-full max-w-xs">
+                                <label class="label">
+                                    <span class="label-text">Password</span>
 
-                            <div class="form-control">
-                                <input type="text" placeholder="Subject" class="input input-bordered" />
-                            </div>
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    className="input input-bordered w-full max-w-xs"
+                                    {...register("password", {
+                                        required: {
+                                            value: true,
+                                            message: 'password is Required'
+                                        },
+                                        pattern: {
+                                            minLength: 6,
+                                            message: 'Must be 6 characters or longer'
+                                        }
+                                    })}
+                                />
+                                <label class="label">
+                                    {errors.password?.type === 'required' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
+                                    {errors.password?.type === 'minLength' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
 
-                            <div class="form-control">
-                                <input type="text-area" placeholder="Your message" class="input input-bordered" />
+
+                                </label>
                             </div>
-                            <div class="form-control mt-6">
-                                <Button>Submit</Button>
-                            </div>
-                        </div>
+                                     {signInError}   
+                            <input className='btn w-full max-w-xs text-white' type="submit" value='Login'/>
+
+                        </form>
+                        <p>New Doctors Protal <Link to='/signup' className='text-secondary'>Create new account</Link></p>
+
+                        <div class="divider">OR</div>
+
+                        <button
+                            onClick={() =>{signInWithGoogle()}}
+                            class="btn btn-outline">CONTINUE WITH GOOGLE</button>
                     </div>
                 </div>
 
