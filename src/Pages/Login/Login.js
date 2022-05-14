@@ -1,9 +1,10 @@
 import React from 'react';
-import { useForm } from "react-hook-form";
+// import { useform } from "react-hook-form";
 import auth from '../../firebase.init';
 import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import Loading from '../Shared/Loading';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 // import { Link } from 'react-router-dom';
 
 
@@ -21,6 +22,9 @@ const Login = () => {
         error1,
       ] = useSignInWithEmailAndPassword(auth);
 
+      const navigate = useNavigate();
+      const location = useLocation();
+      let from = location.state?.from?.pathname || "/";
 
       let signInError;
 
@@ -31,8 +35,9 @@ const Login = () => {
           signInError = <p className='text-red-500'>{error?.message || error1?.message}</p>
       }
 
-     if(user){
+     if(user|| user1){
          console.log(user || user1)
+          navigate(from, { replace: true });
      }
 
     const onSubmit = data =>{
@@ -42,17 +47,17 @@ const Login = () => {
         
     return (
         <div>
-            <div class="hero min-h-screen">
+            <div className="hero min-h-screen">
 
-                <div class="card w-96 bg-base-100 shadow-xl">
-                    <div class="card-body">
-                        <h2 class="text-center text-2xl font-bold">Login</h2>
+                <div className="card w-96 bg-base-100 shadow-xl">
+                    <div className="card-body">
+                        <h2 className="text-center text-2xl font-bold">Login</h2>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
 
-                            <div class="form-control w-full max-w-xs">
-                                <label class="label">
-                                    <span class="label-text">Email</span>
+                            <div className="form-control w-full max-w-xs">
+                                <label className="label">
+                                    <span className="label-text">Email</span>
 
                                 </label>
                                 <input
@@ -70,16 +75,16 @@ const Login = () => {
                                         }
                                     })}
                                 />
-                                <label class="label">
-                                    {errors.email?.type === 'required' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
-                                    {errors.email?.type === 'pattern' && <span class="label-text-alt text-red-500">{errors.email.message}</span>}
+                                <label className="label">
+                                    {errors.email?.type === 'required' && <span className="label-text-alt text-red-500">{errors.email.message}</span>}
+                                    {errors.email?.type === 'pattern' && <span className="label-text-alt text-red-500">{errors.email.message}</span>}
 
                                 </label>
 
                             </div>
-                            <div class="form-control w-full max-w-xs">
-                                <label class="label">
-                                    <span class="label-text">Password</span>
+                            <div className="form-control w-full max-w-xs">
+                                <label className="label">
+                                    <span className="label-text">Password</span>
 
                                 </label>
                                 <input
@@ -97,9 +102,9 @@ const Login = () => {
                                         }
                                     })}
                                 />
-                                <label class="label">
-                                    {errors.password?.type === 'required' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
-                                    {errors.password?.type === 'minLength' && <span class="label-text-alt text-red-500">{errors.password.message}</span>}
+                                <label className="label">
+                                    {errors.password?.type === 'required' && <span className="label-text-alt text-red-500">{errors.password.message}</span>}
+                                    {errors.password?.type === 'minLength' && <span className="label-text-alt text-red-500">{errors.password.message}</span>}
 
 
                                 </label>
@@ -110,11 +115,11 @@ const Login = () => {
                         </form>
                         <p>New Doctors Protal <Link to='/signup' className='text-secondary'>Create new account</Link></p>
 
-                        <div class="divider">OR</div>
+                        <div className="divider">OR</div>
 
                         <button
                             onClick={() =>{signInWithGoogle()}}
-                            class="btn btn-outline">CONTINUE WITH GOOGLE</button>
+                            className="btn btn-outline">CONTINUE WITH GOOGLE</button>
                     </div>
                 </div>
 
