@@ -5,7 +5,9 @@ import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-fireba
 import Loading from '../Shared/Loading';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import useToken from '../../hooks/useToken';
 // import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 
@@ -22,11 +24,19 @@ const Login = () => {
         error1,
       ] = useSignInWithEmailAndPassword(auth);
 
+      const [token] = useToken(user ||user1);
+
       const navigate = useNavigate();
       const location = useLocation();
       let from = location.state?.from?.pathname || "/";
 
       let signInError;
+
+      useEffect(()=>{
+        if(token){
+            navigate(from, { replace: true });
+        }
+      },[token, from, navigate])
 
       if(loading ||loading1){
         return <Loading></Loading>
@@ -35,10 +45,13 @@ const Login = () => {
           signInError = <p className='text-red-500'>{error?.message || error1?.message}</p>
       }
 
-     if(user|| user1){
-         console.log(user || user1)
+     if(token){
+        //  console.log(user || user1)
           navigate(from, { replace: true });
      }
+    //  if(user|| user1){
+    //      navigate('/appointment')
+    //  }
 
     const onSubmit = data =>{
         console.log(data);

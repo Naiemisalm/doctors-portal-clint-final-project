@@ -1,10 +1,11 @@
 import React from 'react';
 // import { useform } from "react-hook-form";
 import auth from '../../firebase.init';
-import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import Loading from '../Shared/Loading';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import useToken from '../../hooks/useToken';
 
 const SignUp = () => {
     const [updateProfile, updating, updateError] = useUpdateProfile(auth);
@@ -20,6 +21,7 @@ const SignUp = () => {
         error1,
     ] = useCreateUserWithEmailAndPassword(auth);
 
+    const [token] = useToken((user || user1))
 
     let signInError;
 
@@ -30,9 +32,17 @@ const SignUp = () => {
         signInError = <p className='text-red-500'>{error?.message || error1?.message || updateError?.message}</p>
     }
 
-    if (user) {
+    if (token) {
         console.log(user || user1)
+        navigate('/appointment')
     }
+
+    //token er ager code
+
+    // if (user || user1) {
+    //     console.log(user || user1)
+    //     // navigate('/appointment')
+    // }
 
     const onSubmit = async data => {
         console.log(data);
@@ -41,6 +51,8 @@ const SignUp = () => {
         await updateProfile({ displayName: data.name });
         console.log('update done')
         navigate('/appointment')
+
+        
     }
     return (
         <div>
